@@ -1,0 +1,70 @@
+import React from 'react';
+import HomePresenter from './HomePresenter';
+import { moviesApi } from '../../api';
+
+
+// ## Basic order
+// componentWillMount( ) > render( ) > componentDidMount( )
+
+// ## UPDATE (come in new props)
+// componentWillReciveProps( ) > shouldComponentUpdate( ) > componentWillUpdate( ) > render( ) > componentDidUpdate( )
+
+
+export default class extends React.Component {
+    state = {
+        nowPlaying: null,
+        upcoming: null,
+        popular: null,
+        error: null,
+        loading: true
+    };
+
+    async componentDidMount(){ 
+        try {
+            const {
+                data: {
+                    results : nowPlaying
+                }
+            } = await moviesApi.nowPlaying();
+
+            const {
+                data : {
+                    results : upcoming
+                }
+            } = await moviesApi.upcoming();
+            const {
+                data: {
+                    results : popular
+                }
+            } = await moviesApi.popular();
+
+            this.setState({
+                nowPlaying,
+                upcoming,
+                popular
+            })
+        } catch (error) {
+            this.setState({
+                error: "Can't find movies information."
+            })
+        } finally{
+            this.setState({
+                loading: false
+            });
+        }
+    }
+
+    render() {
+        const { nowPlaying, upcomping, popular, error, loading } = this.state;
+        console.log(this.state);
+        return (    
+            <HomePresenter
+                nowPlaying={nowPlaying}
+                upcomping={upcomping}
+                popular={popular}
+                error={error}
+                loading={loading}
+            />
+        );
+    }
+}
