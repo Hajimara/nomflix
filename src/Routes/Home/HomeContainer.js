@@ -37,7 +37,6 @@ export default class extends React.Component {
                     results : popular
                 }
             } = await moviesApi.popular();
-
             this.setState({
                 nowPlaying,
                 upcoming,
